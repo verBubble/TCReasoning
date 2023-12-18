@@ -118,7 +118,7 @@
 
 <html>
 <head>
-	<title>Enhancing Datalog Reasoning with Hypertree Decompositions</title>
+	<title>Optimised Storage for Datalog Reasoning</title>
 	<meta property="og:image" content="Path to my teaser.png"/> <!-- Facebook automatically scrapes this. Go to https://developers.facebook.com/tools/debug/ if you update and want to force Facebook to rescrape. -->
 	<meta property="og:title" content="Creative and Descriptive Paper Title." />
 	<meta property="og:description" content="Paper description." />
@@ -138,7 +138,7 @@
 <body>
 	<br>
 	<center>
-		<span style="font-size:36px">Enhancing Datalog Reasoning with Hypertree Decompositions</span>
+		<span style="font-size:36px">Optimised Storage for Datalog Reasoning</span>
 		<table align=center width=600px>
 			<table align=center width=600px>
 				<tr>
@@ -168,12 +168,12 @@
 				<tr>
 					<td align=center width=120px>
 						<center>
-							<span style="font-size:24px"><a href='https://arxiv.org/pdf/2305.06854.pdf'>[Paper]</a></span>
+							<span style="font-size:24px"><a href='TODO'>[Paper]</a></span>
 						</center>
 					</td>
 					<td align=center width=120px>
 						<center>
-							<span style="font-size:24px"><a href='https://github.com/xyzBubble/HDReasoning-Benchmarks/tree/main'>[GitHub]</a></span><br>
+							<span style="font-size:24px"><a href='https://github.com/xyzBubble/OptimiseStorage_DatalogReasoning_benchmarks'>[Benchmarks]</a></span><br>
 						</center>
 					</td>
 				</tr>
@@ -206,7 +206,7 @@
 		<center><h1>Abstract</h1></center>
 		<tr>
 			<td>
-				In this paper, we provide algorithms that exploit hypertree decompositions for the materialisation and incremental evaluation of Datalog programs. Furthermore, we combine this approach with standard Datalog reasoning algorithms in a modular fashion so that the overhead caused by the decompositions is reduced. Our empirical evaluation shows that, when the program contains complex rules, the combined approach is usually significantly faster than the baseline approach, sometimes by orders of magnitude.
+				Materialisation facilitates Datalog reasoning by precomputing all consequences of the facts and the rules so that queries can be directly answered over the materialised facts. However, storing all materialised facts may be infeasible in practice, especially when the rules are complex and the given set of facts is large. We observe that for certain combinations of rules, there exist data structures that compactly represent the reasoning result and can be efficiently queried when necessary. In this paper, we present a general framework that allows for the integration of such optimised storage schemes with standard materialisation algorithms. Moreover, we devise optimised storage schemes targeting at transitive rules and union rules, two types of (combination of) rules that commonly occur in practice. Our experimental evaluation shows that our approach significantly improves memory consumption, sometimes by orders of magnitude, while remaining competitive in terms of query answering time. 
 			</td>
 		</tr>
 	</table>
@@ -252,13 +252,14 @@
 		<center>
 			<tr>
 				<td>
-					We have implemented our approach based on an old version of RDFox. The linux executables are available <a href="https://github.com/xyzBubble/HDReasoning-Benchmarks/tree/main/executable">here</a> and are explained as follows. <br>
+					The linux executables are available <a href="https://github.com/xyzBubble/OptimiseStorage_DatalogReasoning_benchmarks/tree/main/executable">here</a> and are explained as follows. <br>
 					<ul>
-						<li> <i>standard</i>: uses seminaive algorithm for materialisation and an optimised variant of DRed for incremental maintenance. </li>
-						<li> <i>HD</i>: uses our hypertree decomposition based algorithms. </li>
-						<li> <i>Combined</i>: applies HD algorithms to complex rules and the standard algorithms to the remaining rules. </li>
+						<li> <i>standard</i>: applies the seminaive algorithm for materialisation and uses just normal tables for storage. </li>
+						<li> <i>multiScheme</i>: uses plain table, TC and Union schemes discussed in this paper. </li>
+						<li> <i>TCModule [1]</i>: applies an optimised application of TC rules, and a standard seminaive algorithm for the remaining rules, but only a plain table is used for storage. </li>
 					</ul>
 					The source code is available upon request at xinyue.zhang AT cs.ox.ac.uk. 
+					[1] Hu, Pan, Boris Motik, and Ian Horrocks. "Modular materialisation of datalog programs." Artificial Intelligence 308 (2022): 103726.
 				</td>
 			</tr>
 		</center>
@@ -277,26 +278,23 @@
 		<center>
 			<tr>
 				<td>
-					The test datasets and Datalog programs used in our paper are available <a href="https://github.com/xyzBubble/HDReasoning-Benchmarks/tree/main">here</a>.
+					The test datasets and Datalog programs used in our paper are available <a href="https://github.com/xyzBubble/OptimiseStorage_DatalogReasoning_benchmarks/tree/main">here</a>.
 					The data description is shown below: <br>
 					<ul>
-					<li>LUBM/ (containing the rules and data of LUBM)</li>
+					<li>facts/ (input facts) </li>
 						<ul>
-						<li>LUBM-500-split* (the subsections of LUBM-500.nt.tar.bz2)</li> 
-						<li>LUBM_L.dlog (LUBM L rules)</li> 
-						<li>LUBM_L-C.dlog (LUBM L+C rules)</li> 
+						<li>DBpedia/ (the subsections of DBpedia_2016-05.tar.gz)</li> 
+						<li>DAG.bz2 (facts in DAG, can be used without decompressing)</li> 
+						<li>Relations.bz2 (facts in Relations, can be used without decompressing)</li> 
 						</ul>
 						<br>
-					<li>Expressions/ (containing the rules and data of Expression dataset)</li>
+					<li>rules/ (containing Datalog programs used in the evaluation)</li>
 						<ul>
-						<li>exp300.nt.tar.bz2 (the data of Expressions)</li> 
-						<li>exp-rules.dlog (the rules of Expressions)</li>
+						<li>DAG-R.dlog (the rules of DAG)</li> 
+						<li>Relations.dlog (the rules of Relations)</li>
+						<li>DBpedia-SKOS.dlog (the SKOS rules of DBpedia)</li>
 						</ul>
 						<br>
-					<li>YAGO/ (containing the rules of YAGO)</li>
-						<ul>
-						<li>yago_rules.dlog (the rules of YAGO)</li>
-						<li>for the datasets of YAGO, please find it <a href="https://github.com/yspark-dblab/gcare">here</a>. We use the GCARE-version of YAGO directly. </li>
 						</ul>
 					</ul>
 					This repo also includes the instructions to reproduce the experiment results.
@@ -311,9 +309,9 @@
 		<tr>
 			<td><a href=""><img class="layered-paper-big" style="height:175px" src="./resources/paper.png"/></a></td>
 			<td><span style="font-size:14pt">Xinyue Zhang, Pan Hu, Yavor Nenov, Ian Horrocks.<br>
-				<b>Enhancing Datalog Reasoning with Hypertree Decompositions.</b><br>
-				In IJCAI, 2023.<br>
-				<a href="https://www.ijcai.org/proceedings/2023/0377.pdf">camera ready</a><br>
+				<b>Optimised Storage for Datalog Reasoning.</b><br>
+				In AAAI, 2024.<br>
+				<a href="TODO">camera ready</a><br>
 				<span style="font-size:4pt"><a href=""><br></a>
 				</span>
 			</td>
@@ -325,11 +323,11 @@
 		<tr>
 			<td>
 				<div style="color:#171B21; background-color:#F5F5F5; border: 1px solid #CCCCCC;; border-radius:5px; padding:10px; font-family: menlo; font-size: 0.8em">
-					@inproceedings{zhang2023enhancing,<br>
-					&nbsp title={Enhancing Datalog Reasoning with Hypertree Decompositions},<br>
+					@inproceedings{zhang2024optimised,<br>
+					&nbsp title={Optimised Storage for Datalog Reasoning},<br>
 					&nbsp author={Zhang, Xinyue and Hu, Pan and Nenov, Yavor and Horrocks, Ian},<br>
-					&nbsp booktitle={International Joint Conferences on Artificial Intelligence},<br>
-					&nbsp year={2023}<br>
+					&nbsp booktitle={The 38th Annual AAAI Conference on Artificial Intelligence},<br>
+					&nbsp year={2024}<br>
 					  }
 				</div>
 			</td>
